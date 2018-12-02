@@ -1,4 +1,5 @@
 let input = require('./input/01')
+let circular = require('./util/circular')
 
 let frequencies = 
 input
@@ -11,19 +12,14 @@ frequencies
 
 console.log('answer1', answer1)
 
+let frequencyList = circular(frequencies)
+let frequency = 0
 let seen = { }
-let f = 0
-let loop = 0
-while (true) {
-    for (let i of frequencies) {
-        f += i
-        if (seen [ f ]) {
-            console.log('answer2', f);
-            return
-        }
-        else {
-            seen[ f ] = true
-        }
+for (let f of frequencyList) {
+    frequency += f
+    if (seen [ frequency ]){
+        console.log('answer2', frequency)
+        return
     }
-    console.log(loop++)
+    seen[ frequency ] = true
 }
