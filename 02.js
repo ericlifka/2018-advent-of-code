@@ -32,12 +32,9 @@ function isThree(bucket) {
 
 function bucket(str) {
     let bucket = { }
-    for (s of str) {
-        if (bucket[ s ]) 
-            bucket[ s ]++
-        else
-            bucket[ s ] = 1
-    }
+    for (s of str)
+        bucket[ s ] = ( bucket[ s ] || 0 ) + 1
+
     return bucket
 }
 
