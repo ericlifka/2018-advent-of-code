@@ -1,12 +1,11 @@
-let input = require('./input/01')
 let circular = require('./util/circular')
 
-let frequencies = 
-input
+let frequencies =
+require('./input/01')
     .split('\n')
     .map((n => parseInt(n, 10)))
 
-let answer1 = 
+let answer1 =
 frequencies
     .reduce((accum, curr) => accum + curr, 0)
 
