@@ -3,9 +3,6 @@ require('./input/02')
     .split('\n')
 
 buckets = ids
-    .map(id => id.split(''))
-    .map(idarr => idarr.sort())
-    .map(idarr => idarr.join(''))
     .map(id => bucket(id))
 
 let twos = buckets.reduce((accum, id) => isTwo(id) ? accum + 1 : accum, 0)
