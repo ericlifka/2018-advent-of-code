@@ -23,8 +23,8 @@ for (let g in guards) {
 }
 
 let maxGuard =
-Object.keys(guards).reduce((max, guard) => 
-    guards[ guard ].minutes > max.minutes ? guards[ guard ] : max
+Object.keys(guards).reduce((max, g) => 
+    guards[ g ].minutes > max.minutes ? guards[ g ] : max
 , { minutes: -1 })
 
 let start, stop,
@@ -41,4 +41,29 @@ minutes.reduce((max, _, current) =>
         : max
 , 0)
 
-console.log(`Guard: ${ maxGuard.id } * Minute: ${ max }(${minutes[max]}) = ${ parseInt(maxGuard.id.slice(1)) * max }`)
+console.log(`Strategy 1: Guard: ${ maxGuard.id } * Minute: ${ max }(${minutes[max]}) = ${ parseInt(maxGuard.id.slice(1)) * max }`)
+
+for (let g in guards) {
+    let start, stop,
+        guard = guards[ g ],
+        naps = guard.naps,
+        minutes = Array.from(Array(60)).map(() => 0)
+    while ([start, stop, ...naps] = naps, start !== undefined)
+        for (let i = start; i < stop; i++)
+            minutes[i]++
+    
+    guard.common =
+    minutes.reduce((max, _, current) => 
+        minutes[ current ] > minutes[ max ] 
+            ? current
+            : max
+    , 0)
+    guard.count = minutes[ guard.common ]
+}
+
+let mostCommon =
+Object.keys(guards).reduce((max, g) => 
+    guards[ g ].count > max.count ? guards[ g ] : max
+, { count: -1 })
+
+console.log(`Strategy 2: Guard: ${ mostCommon.id } * Minute: ${ mostCommon.common }(${ mostCommon.count }) = ${ parseInt(mostCommon.id.slice(1)) * mostCommon.common }`)
