@@ -32,21 +32,34 @@ let pairs = {
     'z': 'Z', 'Z': 'z'
 }
 
-let countpass = 0
-let reaction = true
-while ( reaction ) {
-    reaction = false
+function runReaction(tokens) {
+    let reaction = true
+    while ( reaction ) {
+        reaction = false
 
-    for ( let i = 0; i < tokens.length - 1; i++ ) {
-        if ( pairs[ tokens[ i ] ] == tokens[ i + 1 ] ) {
-            tokens.splice(i, 2)
-            reaction = true
-            i--
+        for ( let i = 0; i < tokens.length - 1; i++ ) {
+            if ( pairs[ tokens[ i ] ] == tokens[ i + 1 ] ) {
+                tokens.splice(i, 2)
+                reaction = true
+                i--
+            }
         }
     }
-    countpass++
-    if (countpass % 100 == 0) {
-        console.log(countpass, tokens.length)
-    }
+    return tokens.length
 }
-console.log(tokens.length)
+
+console.log('part 1: ', runReaction(tokens))
+
+const removePair = (tokens, k) => 
+    tokens.filter(t => t != k && t != pairs[ k ])
+
+let result =
+'abcdefghijklmnopqrstuvwxyz'
+    .split('')
+    .map(k => removePair(tokens, k))
+    .map(tokens => runReaction(tokens))
+    .reduce((min, current) => 
+        current < min ? current : min
+    , tokens.length)
+
+console.log('part 2: ', result)
