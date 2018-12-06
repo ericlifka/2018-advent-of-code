@@ -54,3 +54,22 @@ for (let key in counts2)
 
 console.log('Part 1', Math.max.apply(null, consistent))
 
+
+function inSafe(point, coordinates) {
+    let distances = 
+    coordinates.map(({x, y}) => 
+        Math.abs(x - point.x) + Math.abs(y - point.y))
+
+    let sum =
+    distances.reduce((sum, d) => sum + d, 0)
+
+    return sum < 10000
+}
+
+let safeCount = 0
+for (var x = 0; x < 400; x++)
+    for (var y = 0; y < 400; y++)
+        if (inSafe({x, y}, coordinates))
+            safeCount++
+
+console.log('part 2', safeCount)
