@@ -4,23 +4,18 @@
 (defn part1 [frequencies]
   (reduce + frequencies))
 
-(defn run-sequence [seen sum frequencies]
+(defn part2 [seen sum frequencies all]
   (let [new-sum (+ sum (first frequencies))
-        remaining (rest frequencies)]
-    (cond
-      (seen new-sum) [seen new-sum]
-      (<= (count remaining) 0) [seen new-sum]
-      :else (run-sequence (conj seen new-sum) new-sum remaining))))
-
-(defn part2 [seen sum frequencies]
-  (let [[seen sum] (run-sequence seen sum frequencies)]
-    (if (seen sum)
-      sum
-      (part2 seen sum frequencies))))
+        remaining (if (= 1 (count frequencies))
+                    all 
+                    (rest frequencies))]
+    (if (seen new-sum) 
+      new-sum
+      (recur (conj seen new-sum) new-sum remaining all))))
 
 (let [input (slurp "input-01.txt")
       lines (split-lines input)
       numbers (map #(Integer/parseInt %) lines)]
   
   (println "part1" (part1 numbers))
-  (println "part2" (part2 #{} 0 numbers)))
+  (println "part2" (part2 #{} 0 numbers numbers)))
