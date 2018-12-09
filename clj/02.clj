@@ -20,15 +20,6 @@
         three-count (count (filter (has-n 3) buckets))]
     (* two-count three-count)))
 
-(defn compare-ids [a b mismatch?]
-  (let [first-a (first a)
-        first-b (first b)
-        different? (not= first-a first-b)]
-    (cond 
-      (and mismatch? different?) false
-      (= 0 (count (rest a))) true
-      :else (recur (rest a) (rest b) (or different? mismatch?)))))
-
 (defn permutations [items]
   (for [x items y items] (vector x y)))
 
@@ -39,10 +30,14 @@
           (conj (remove-difference (rest a) (rest b)) first-a)
           (remove-difference (rest a) (rest b))))))
 
+(defn compare-ids [a b]
+  (let [similar (remove-difference (seq a) (seq b))]
+       (= (+ 1 (count similar)) (count a))))
+
 (defn part2 [ids]
   (loop [pairs (permutations ids)]
     (let [[a b] (first pairs)]
-      (if (and (not= a b) (compare-ids (seq a) (seq b) false))
+      (if (and (not= a b) (compare-ids a b))
         (join (remove-difference (seq a) (seq b)))
         (recur (rest pairs))))))
 
