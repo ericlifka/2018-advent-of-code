@@ -2,16 +2,24 @@
 
 (defn get-hundredths-place [x]
   (if (< x 100) 0
-      (Integer/parseInt (str (first (take-last 3 (seq (str x))))))))
+      (->> x 
+           (str)
+           (seq)
+           (take-last 3)
+           (first)
+           (str)
+           (Integer/parseInt))))
 
 (def calc-power-level
   (memoize
    (fn [x y]
-     (let [rack-id (+ x 10)
-           power-level (+ (* rack-id y) GRID-CERIAL-NUMBER)
-           power-level2 (* power-level rack-id)
-           hundreds (get-hundredths-place power-level2)]
-       (- hundreds 5)))))
+     (let [rack-id (+ x 10)]
+       (->> rack-id
+            (* y)
+            (+ GRID-CERIAL-NUMBER)
+            (* rack-id)
+            (get-hundredths-place)
+            (+ -5))))))
 
 (defn outer-square-coords [x y s]
   (concat
@@ -25,26 +33,26 @@
    (fn [x y s]
      (if (= s 1)
        (calc-power-level x y)
-       (let [s-1 (calc-square x y (- s 1))
-             coords (outer-square-coords x y s)]
-         (+ s-1
-            (reduce + 
-                    (map #(calc-power-level (first %) (last %)) 
-                         coords))))))))
+       (->> (outer-square-coords x y s)
+            (map #(calc-power-level (first %) (last %)))
+            (reduce +)
+            (+ (calc-square x y (dec s))))))))
+
+(defn max-grid-reducer [left right]
+  (if (> (first left) (first right)) 
+    left 
+    right))
 
 (defn max-of-size [s]
-  (reduce 
-   #(if (> (first %1) (first %2)) %1 %2)
-   (for [x (range 1 (- 302 s))
-         y (range 1 (- 302 s))]
-     [(calc-square x y s)
-      x y s])))
+  (reduce max-grid-reducer
+          (for [x (range 1 (- 302 s))
+                y (range 1 (- 302 s))]
+            [(calc-square x y s) x y s])))
 
 (defn max-of-all-sizes []
-  (reduce 
-   #(if (> (first %1) (first %2)) %1 %2)
-   (for [s (range 1 16)] 
-     (do (println s) (max-of-size s)))))
+  (reduce max-grid-reducer
+          (for [s (range 1 16)] 
+            (max-of-size s))))
 
 (println "part 1" (time (max-of-size 3)))
 (println "part 2" (time (max-of-all-sizes)))
