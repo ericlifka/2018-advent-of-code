@@ -26,7 +26,8 @@ const moveLeft = (head, number = 1) =>
         ? head
         : moveLeft(head.left, number -1)
 
-let list = newList(),
+let start = new Date(),
+    list = newList(),
     input = require('./input/09').split(' '),
     player = 1,
     players = parseInt(input[ 0 ], 10) + 1,
@@ -44,4 +45,6 @@ for (let i = 1; i <= lastMarble; i++) {
         player = 1
 }
 
-console.log(Math.max.apply(null, scores))
+console.log(lastMarble)
+console.log('part 2', Math.max.apply(null, scores))
+console.log('time elapsed', new Date() - start)
