@@ -6,10 +6,11 @@ function getHundredsPlace (x) {
     return Number(str[ str.length - 3 ])
 }
 
-let cache = { }
-function calcPowerLevel(x, y, gridCerial) {
-    if ( cache[ `${x}.${y}` ] ) {
-        return cache[ `${x}.${y}` ]
+let power_cache = { }
+function calcPowerLevel(x, y, gridCerial = GRID_CERIAL_NUMBER) {
+    let cache_key = `${x}.${y}`
+    if ( power_cache[ cache_key ] ) {
+        return power_cache[ cache_key ]
     }
 
     let rackId = x + 10,
@@ -19,12 +20,34 @@ function calcPowerLevel(x, y, gridCerial) {
     powerLevel *= rackId
 
     let hundreds = getHundredsPlace(powerLevel)
+    let answer = hundreds - 5
+    power_cache[ cache_key ] = answer
 
-    return hundreds - 5
+    return answer
 }
 
-function getGrid (x, y, size) {
+let grid_cache = { }
+function getGridSum (x, y, size) {
+    let cache_key = `${x}.${y}.${size}`
+    let answer = null
 
+    if (size == 1) {
+        answer = calcPowerLevel(x, y)
+    }
+    else {
+        let answer = grid_cache[ `${x}.${y}.${size - 1}` ]
+        // bottom row
+        for (let _x = 0; _x < size; _x++) {
+            answer += calcPowerLevel(x + _x, y + size - 1)
+        }
+        // right row
+        for (let _y = 0; _y < size - 1; _y++) {
+            answer += calcPowerLevel(x + size - 1, y + _y)
+        }
+    }
+
+    grid_cache[ cache_key ] = answer
+    return answer
 }
 
 let max = -1,
@@ -32,7 +55,7 @@ let max = -1,
     sums = [ ],
     last = new Date()
 
-for (let s = 1; s <= 300; s++) {
+for (let s = 1; s <= 1; s++) {
     let now = new Date()
     console.log(`size ${s} - ${now - last}`)
     last = now
@@ -40,13 +63,8 @@ for (let s = 1; s <= 300; s++) {
     for (let x = 1; x < 302 - s; x++) {
         for (let y = 1; y < 302 - s; y++) {
 
-            let sum = 0
-
-            for (let _x = 0; _x < s; _x++) {
-                for (let _y = 0; _y < s; _y++) {
-                    sum += calcPowerLevel( x + _x, y + _y, GRID_CERIAL_NUMBER )
-                }
-            }
+            let sum = getGridSum(x, y, x)
+            sums.push(sum)
 
             if (sum > max) {
                 max = sum
@@ -56,5 +74,5 @@ for (let s = 1; s <= 300; s++) {
         }
     }
 }
-
+console.log(sums)
 console.log(max, coord)
