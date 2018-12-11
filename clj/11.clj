@@ -50,6 +50,6 @@
 ;                (if (and (= 1 x) (= 1 y)) (println [x y s]))
 ;                [(reduce + (map #(apply calc-power-level %) (get-grid x y s))) x y s])))))
 
-(let [maxes (for [s (range 1 301)]
+(let [maxes (for [s (range 1 20)]
               (time (max-of-size s)))]
      (println (last (sort-by last maxes))))
