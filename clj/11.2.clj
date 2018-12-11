@@ -27,7 +27,6 @@
        (calc-power-level x y)
        (let [s-1 (calc-square x y (- s 1))
              coords (outer-square-coords x y s)]
-        ;  (println x y s coords)
          (+ s-1
             (reduce + 
                     (map #(calc-power-level (first %) (last %)) 
