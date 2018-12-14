@@ -1,78 +1,60 @@
+const startTime = new Date()
 const GRID_CERIAL_NUMBER = 5468
 
-function getHundredsPlace (x) {
-    if (x < 100) return 0
-    let str = "" + x
-    return Number(str[ str.length - 3 ])
-}
+const empty = size => Array.from(Array(size))
+const table = (size, val = () => 0) => 
+    empty(size).map((_, y) => empty(size).map((_, x) =>
+        val(x, y)))
 
-let power_cache = { }
+const getHundredsPlace = x =>
+    x < 100 
+        ? 0
+        : Number( `${x}`.slice(-3, -2) )
+
 function calcPowerLevel(x, y, gridCerial = GRID_CERIAL_NUMBER) {
-    let cache_key = `${x}.${y}`
-    if ( power_cache[ cache_key ] ) {
-        return power_cache[ cache_key ]
-    }
-
     let rackId = x + 10,
         powerLevel = rackId * y 
 
     powerLevel += gridCerial
     powerLevel *= rackId
 
-    let hundreds = getHundredsPlace(powerLevel)
-    let answer = hundreds - 5
-    power_cache[ cache_key ] = answer
-
-    return answer
+    return getHundredsPlace(powerLevel) - 5
 }
 
-let grid_cache = { }
-function getGridSum (x, y, size) {
-    let cache_key = `${x}.${y}.${size}`
-    let answer = null
+let powerGrid = table(301, (x, y) => 
+    (x == 0 || y == 0)
+        ? 0
+        : calcPowerLevel(x, y))
 
-    if (size == 1) {
-        answer = calcPowerLevel(x, y)
-    }
-    else {
-        let answer = grid_cache[ `${x}.${y}.${size - 1}` ]
-        // bottom row
-        for (let _x = 0; _x < size; _x++) {
-            answer += calcPowerLevel(x + _x, y + size - 1)
-        }
-        // right row
-        for (let _y = 0; _y < size - 1; _y++) {
-            answer += calcPowerLevel(x + size - 1, y + _y)
-        }
-    }
+let sumTable = table(301)
 
-    grid_cache[ cache_key ] = answer
-    return answer
+for ( let y = 1; y <= 300; y++ ) {
+    let rowSum = 0
+
+    for ( let x = 1; x <= 300; x++ ) {
+        rowSum += powerGrid[ y ][ x ]
+
+        sumTable[ y ][ x ] = rowSum + sumTable[ y - 1 ][ x ]
+    }
 }
 
-let max = -1,
-    coord = [0, 0],
-    sums = [ ],
-    last = new Date()
+let max = { x: 0, y: 0, s: 1, sum: 0 }
+for ( let y = 1; y <= 300; y++ ) {
+    for ( let x = 1; x <= 300; x++ ) {
+        let upper = sumTable[ y - 1 ][ x - 1 ]
+        for ( let s = 0; s + x <= 300 && s + y <= 300; s++ ) {
+            let lower = sumTable[ y + s ][ x + s ],
+                
+                left = sumTable[ y + s ][ x - 1 ],
+                top = sumTable[ y - 1 ][ x + s ],
+                sum = lower + upper - left - top
 
-for (let s = 1; s <= 1; s++) {
-    let now = new Date()
-    console.log(`size ${s} - ${now - last}`)
-    last = now
-
-    for (let x = 1; x < 302 - s; x++) {
-        for (let y = 1; y < 302 - s; y++) {
-
-            let sum = getGridSum(x, y, x)
-            sums.push(sum)
-
-            if (sum > max) {
-                max = sum
-                coord = [ x, y ]
-                console.log(`new sum ${max} - ${coord}`)
+            if ( sum > max.sum ) {
+                max = { x, y, s: s + 1, sum }
             }
         }
     }
 }
-console.log(sums)
-console.log(max, coord)
+
+console.log('part 2', max)
+console.log('time: ', new Date() - startTime)
