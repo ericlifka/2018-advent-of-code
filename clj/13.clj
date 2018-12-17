@@ -65,7 +65,6 @@
         turns (:turns kart)
         direction (:direction kart)
         track (lookup grid x y)]
-    (println "track" track)
     (cond
       (= track \|) (update kart :y (if (= :north direction) dec inc))
       (= track \-) (update kart :x (if (= :east direction) inc dec))
@@ -97,7 +96,7 @@
                                    (= :west direction) {:direction :north :turns 0 :x x :y (dec y)})))))
 
 (defn check-collision [kart other-karts]
-  (reduce #(or %1 %1)
+  (reduce #(or %1 %2)
           (for [other other-karts]
             (and (= (:x other) (:x kart))
                  (= (:y other) (:y kart))))))
@@ -114,10 +113,10 @@
   (loop [processed-karts []
          current-kart (first all-karts)
          remaining-karts (rest all-karts)]
-    (print-tracks tracks (conj (concat processed-karts remaining-karts) current-kart))
-    (println processed-karts current-kart remaining-karts)
+    ; (print-tracks tracks (conj (concat processed-karts remaining-karts) current-kart))
+    ; (println processed-karts current-kart remaining-karts)
     (let [updated-kart (step-kart current-kart tracks)]
-      (println updated-kart)
+      ; (println updated-kart)
       (if (check-collision updated-kart (concat processed-karts remaining-karts))
         (println updated-kart) ; found crash, print and end
         (let [rollover? (zero? (count remaining-karts))
