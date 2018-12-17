@@ -1,3 +1,5 @@
+(ns advent.2018.11)
+
 (def GRID-CERIAL-NUMBER 5468)
 
 (defn get-hundredths-place [x]

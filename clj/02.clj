@@ -1,4 +1,4 @@
-(ns advent.2018.01
+(ns advent.2018.12
   (:require [clojure.string :refer [split-lines join]]))
 
 (defn bucket-str 
