@@ -57,10 +57,7 @@
   (sort-by #(+ (* 10 (:y %)) (:x %)) karts))
 
 (defn step-kart [kart grid]
-  (let [x (:x kart)
-        y (:y kart)
-        turns (:turns kart)
-        direction (:direction kart)
+  (let [{:keys [x y turns direction]} kart
         track (lookup grid x y)]
     (cond
       (= track \|) (update kart :y (if (= :north direction) dec inc))
