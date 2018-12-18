@@ -1,5 +1,5 @@
+const start = new Date()
 const TARGET = `846601`
-// const TARGET = '9251071085'
 const TARGET_COUNT = TARGET.length
 
 function generateRecipes (val1, val2) {
@@ -21,12 +21,16 @@ while (true) {
     elf1 = (elf1 + elf1Value + 1) % recipes.length
     elf2 = (elf2 + elf2Value + 1) % recipes.length
 
-    if ( recipes.length % 1000000 == 0 ) {
-        console.log(recipes.length)
-    }
-    if ( recipes.slice(-TARGET_COUNT).join('') == TARGET ) {
+    let last = recipes.slice(-TARGET_COUNT).join('')
+    let last2 = recipes.slice(-TARGET_COUNT - 1, -1).join('')
+    
+    if ( last == TARGET ) {
+        console.log( recipes.length - TARGET_COUNT )
+        break
+    } else if ( last2 == TARGET  ) {
+        console.log( recipes.length - TARGET_COUNT - 1 )
         break
     }
 }
 
-console.log( recipes.length - TARGET_COUNT )
+console.log('time: ', new Date() - start)
